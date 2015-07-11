@@ -6,8 +6,14 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'api/category', views.CategoryViewSet)
+router.register(r'api/customcategory', views.CustomCategoryViewSet)
 router.register(r'api/topic', views.TopicViewSet)
 router.register(r'api/comment', views.CommentViewSet)
+router.register(r'api/flag', views.FlagViewSet)
+router.register(r'api/commentflag', views.CommentFlagViewSet)
+router.register(r'api/commenthistory', views.CommentHistoryViewSet)
+router.register(r'api/commentbookmark', views.CommentBookmarkViewSet)
+router.register(r'api/topicfavorite', views.TopicFavoriteViewSet)
 
 
 urlpatterns = [

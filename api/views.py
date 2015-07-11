@@ -11,7 +11,14 @@ from spirit.models.category import Category
 from spirit.models.topic import Topic
 from spirit.models.comment import Comment
 from spirit.models.comment_like import CommentLike
+from spirit.models.comment_flag import Flag, CommentFlag
+from spirit.models.comment_history import CommentHistory
+from spirit.models.comment_bookmark import CommentBookmark
+from spirit.models.topic_favorite import TopicFavorite
 from spirit.views.comment_like import like_create, like_delete
+from spirit.views.comment_flag import flag_create
+
+from .models import CustomCategory
 
 # Create your views here.
 
@@ -20,12 +27,36 @@ from spirit.views.comment_like import like_create, like_delete
 ########################
 
 class CategorySerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj):
+        try: 
+            customcategory = CustomCategory.objects.get(category_ptr=obj)
+            return customcategory.image.url
+        except:
+            pass
+        return None
+
     class Meta:
         model = Category
+        fields = map(lambda x: x.name, Category._meta.fields)
+        fields += ['image']
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+########################
+#     Custom Categories
+########################
+
+class CustomCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomCategory
+
+class CustomCategoryViewSet(viewsets.ModelViewSet):
+    queryset = CustomCategory.objects.all()
+    serializer_class = CustomCategorySerializer
 
 
 ########################
@@ -96,3 +127,68 @@ def api_like_delete(request, pk):
         return like_delete(request, pk)
 
     raise Http404
+
+
+########################
+#     Topics
+########################
+
+class FlagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Flag
+
+class FlagViewSet(viewsets.ModelViewSet):
+    queryset = Flag.objects.all()
+    serializer_class = FlagSerializer
+
+
+########################
+#     Comment Flag
+########################
+
+class CommentFlagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentFlag
+
+class CommentFlagViewSet(viewsets.ModelViewSet):
+    queryset = CommentFlag.objects.all()
+    serializer_class = CommentFlagSerializer
+
+
+########################
+#     Comment History
+########################
+
+class CommentHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentHistory
+
+class CommentHistoryViewSet(viewsets.ModelViewSet):
+    queryset = CommentHistory.objects.all()
+    serializer_class = CommentHistorySerializer
+
+
+########################
+#     Comment Bookmark
+########################
+
+class CommentBookmarkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentBookmark
+
+class CommentBookmarkViewSet(viewsets.ModelViewSet):
+    queryset = CommentBookmark.objects.all()
+    serializer_class = CommentBookmarkSerializer
+
+
+########################
+#     Topic Favorite
+########################
+
+class TopicFavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TopicFavorite
+
+class TopicFavoriteViewSet(viewsets.ModelViewSet):
+    queryset = TopicFavorite.objects.all()
+    serializer_class = TopicFavoriteSerializer
